@@ -7605,6 +7605,8 @@ split-lines {
 }
 
 .product-gallery {
+  position:sticky;
+  top:150px;
   gap: var(--spacing-5);
   grid-auto-columns: minmax(0, 1fr);
   display: grid;
