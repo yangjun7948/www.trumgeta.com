@@ -7723,8 +7723,6 @@ split-lines {
 @media screen and (min-width: 700px) {
   .product-gallery__thumbnail-list {
     grid-auto-columns: 64px;
-    display:sticky;
-    top:150px;
   }
 }
 
@@ -7865,6 +7863,8 @@ split-lines {
   .product-gallery--desktop-thumbnails-left {
     grid: auto / auto-flow auto minmax(0, 1fr);
     align-items: start;
+    display:sticky;
+    top:150px;
   }
 
   .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list-wrapper {
