@@ -7575,11 +7575,6 @@ split-lines {
 }
 
 @media screen and (min-width: 700px) {
-  .product-info {
-    position:sticky;
-    top:150px;
-  }
-
   .product-info__vendor, .product-info__title, .product-info__badge-list, .product-info__sku, .product-info__price, .product-info__rating, .product-info__payment-terms {
     --product-info-block-spacing: var(--spacing-4);
   }
@@ -7728,6 +7723,8 @@ split-lines {
 @media screen and (min-width: 700px) {
   .product-gallery__thumbnail-list {
     grid-auto-columns: 64px;
+    display:sticky;
+    top:150px;
   }
 }
 
