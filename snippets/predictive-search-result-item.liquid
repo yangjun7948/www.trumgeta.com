@@ -34,6 +34,9 @@ Supported variables
           </span>
 
           {%- render 'price-list', product: product -%}
+          <div class="text-xs text-subdued">
+            SKU: {{ product.variants.sku }}
+          </div>
         </div>
       </div>
     </a>
