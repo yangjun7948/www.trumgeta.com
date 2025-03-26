@@ -1,5 +1,16 @@
 {%- capture product_form_id -%}product-form-{{ product.id }}-{{ section.id }}{%- endcapture -%}
-
+  <script>
+    document.body.addEventListener('click', function(event) {
+    // 检查点击目标是否匹配选择器
+      // 选择ID包含"keyword"的元素
+     
+      var parentNode = document.querySelector(".Lo-Amazon");
+      if(parentNode.contains(event.target)){ 
+        console.log("buy_on_amazon")
+        gtag("event","buy_on_amazon",{})
+      }
+    })
+  </script>
 <safe-sticky class="product-info">
   {%- for block in section.blocks -%}
     {%- assign previous_block_index = forloop.index0 | minus: 1 -%}
