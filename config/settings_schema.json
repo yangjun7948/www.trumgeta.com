@@ -631,6 +631,12 @@
         "default": false
       },
       {
+        "type": "checkbox",
+        "id": "hide_product_prices",
+        "label": "Hide product prices",
+        "default": false
+      },
+      {
         "type": "select",
         "id": "product_rating_mode",
         "label": "Show product rating as...",

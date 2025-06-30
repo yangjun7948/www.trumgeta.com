@@ -1,6 +1,6 @@
 .country-flags {
-  background: -webkit-image-set(url("//www.trumgeta.com/cdn/shop/t/4/assets/country-flags.png?v=37230036826556269641714209103") 1x, url("//www.trumgeta.com/cdn/shop/t/4/assets/country-flags-2x.png?v=119388446682176363021714209103") 2x) no-repeat top left;
-  background: image-set(url("//www.trumgeta.com/cdn/shop/t/4/assets/country-flags.png?v=37230036826556269641714209103") 1x, url("//www.trumgeta.com/cdn/shop/t/4/assets/country-flags-2x.png?v=119388446682176363021714209103") 2x) no-repeat top left;
+  background: -webkit-image-set(url("//www.trumgeta.com/cdn/shop/t/7/assets/country-flags.png?v=37230036826556269641737423149") 1x, url("//www.trumgeta.com/cdn/shop/t/7/assets/country-flags-2x.png?v=119388446682176363021737423149") 2x) no-repeat top left;
+  background: image-set(url("//www.trumgeta.com/cdn/shop/t/7/assets/country-flags.png?v=37230036826556269641737423149") 1x, url("//www.trumgeta.com/cdn/shop/t/7/assets/country-flags-2x.png?v=119388446682176363021737423149") 2x) no-repeat top left;
   width: 20px;
   height: 20px;
   flex-shrink: 0;

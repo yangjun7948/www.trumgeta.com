@@ -1,9 +1,13 @@
+:root {
+  --section-outer-spacing-block: var(--spacing-5);
+}
+
 
 /* 返回首页按钮  */
 #back-to-top {
   position: fixed;
-  right: 22px;
-  bottom: 22px;
+  right: 23px;
+  bottom: 150px;
   background-color: #fec31f;
   color: #f0f0f0;
   border-radius: 50%;
@@ -12,7 +16,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 30px;
   cursor: pointer;
   z-index: 1000;
   transition: opacity 0.3s ease, visibility 0.3s;
@@ -4419,7 +4423,7 @@ split-lines {
 
 .article-banner__image {
   z-index: 1;
-  width: 100%;
+  width: 90%;
 }
 
 .article-banner__image > img {
@@ -5112,7 +5116,7 @@ split-lines {
   text-align: center;
   z-index: 2;
   width: 100%;
-  position: fixed;
+  /* position: fixed; */
   bottom: var(--spacing-8);
 }
 
@@ -8526,7 +8530,7 @@ split-lines {
 }
 
 .shopify-payment-button__button {
-  height: auto !important;
+  height: 44px !important;
 }
 
 .shopify-payment-button__button[disabled] {
@@ -8535,7 +8539,7 @@ split-lines {
 
 .shopify-payment-button__button--branded {
   border-radius: var(--rounded-button) !important;
-  min-height: 100% !important;
+  min-height: 44px !important;
   overflow: hidden !important;
 }
 
@@ -8551,7 +8555,7 @@ split-lines {
   font-weight: bolder !important;
   font-size: var(--shopify-payment-button-font-size, var(--text-base)) !important;
   text-align: center !important;
-  line-height: inherit !important;
+  line-height: 44px !important;
   letter-spacing: var(--text-letter-spacing) !important;
   text-decoration: none !important;
   transition: background-color .15s ease-in-out, color .15s ease-in-out, box-shadow .15s ease-in-out !important;
@@ -8561,7 +8565,7 @@ split-lines {
 }
 
 .shopify-payment-button__button--branded.shopify-payment-button__button--branded:focus-within {
-  outline: 2px solid highlight;
+  outline: 20px solid highlight;
   outline: 5px auto -webkit-focus-ring-color;
 }
 

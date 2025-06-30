@@ -1,16 +1,16 @@
 {%- capture product_form_id -%}product-form-{{ product.id }}-{{ section.id }}{%- endcapture -%}
-  <script>
-    document.body.addEventListener('click', function(event) {
-    // 检查点击目标是否匹配选择器
-      // 选择ID包含"keyword"的元素
-     
-      var parentNode = document.querySelector(".Lo-Amazon");
-      if(parentNode.contains(event.target)){ 
-        console.log("buy_on_amazon")
-        gtag("event","buy_on_amazon",{})
-      }
-    })
-  </script>
+<script>
+  document.body.addEventListener('click', function(event) {
+  // 检查点击目标是否匹配选择器
+    // 选择ID包含"keyword"的元素
+   
+    var parentNode = document.querySelector(".Lo-Amazon");
+    if(parentNode.contains(event.target)){ 
+      console.log("buy_on_amazon")
+      gtag("event","buy_on_amazon",{})
+    }
+  })
+</script>
 <safe-sticky class="product-info">
   {%- for block in section.blocks -%}
     {%- assign previous_block_index = forloop.index0 | minus: 1 -%}
@@ -55,7 +55,7 @@
 
 <script>
   function copySKU(sku) {
-    const textToCopy = `SKU: ${sku}`; // 添加 "SKU: " 前缀
+    const textToCopy = `${sku}`; // 添加 "SKU: " 前缀
     navigator.clipboard.writeText(textToCopy).then(() => {
       const message = document.getElementById('sku-copied-message');
       message.style.display = 'block';
@@ -73,8 +73,6 @@
     });
   }
 </script>
-
-
       {%- when 'price' -%}
         <div class="product-info__price">
           <div class="rating-with-text">

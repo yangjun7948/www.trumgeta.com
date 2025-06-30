@@ -19,6 +19,11 @@ Supported variables
 * alignment: can be "center" to align the prices
 {%- endcomment -%}
 
+
+
+
+
+
 {%- liquid
   case size
     when 'lg'
@@ -40,6 +45,10 @@ Supported variables
       assign unit_price_classes = 'text-subdued text-sm'
   endcase
 -%}
+
+
+{%- unless settings.hide_product_prices -%}
+
 
 <price-list {% if form_id %}role="region" aria-live="polite"{% endif %} class="price-list {% if size == 'lg' %}price-list--lg{% endif %} {% if text_alignment == 'center' %}justify-center{% endif %}" {{ block.shopify_attributes }}>
   {%- if variant != blank -%}
@@ -202,3 +211,5 @@ Supported variables
     {%- endif -%}
   {%- endunless -%}
 </price-list>
+
+{%- endunless -%}

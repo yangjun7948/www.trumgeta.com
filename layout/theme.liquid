@@ -7,6 +7,8 @@ NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing
 ------------------------------------------------------------------------------------------------------------------------
 {%- endcomment -%}
 
+<script src="https://plugin-code.salesmartly.com/js/project_349577_359092_1748935993.js"></script>
+
 <!doctype html>
 
 <html lang="{{ request.locale.iso_code }}" dir="{% render 'direction' %}">
@@ -63,8 +65,6 @@ NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing
     }
   {% endif %}
 </style>
-
-    
   </head>
 
   <body class="{% if settings.show_page_transition %}page-transition{% endif %} {% if settings.zoom_image_on_hover %}zoom-image--enabled{% endif %}">
@@ -108,14 +108,5 @@ NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing
        <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z"/></svg>  
     </a>
   </div>
-
-         <!-- 圣诞雪花 -->
-
-{% if template == 'index' %}
-    <!-- 引用 snow.js 文件 -->
-    <script src="{{ 'snowflake.js' | asset_url }}"></script>
-{% endif %}
-
-       
   </body>
 </html>

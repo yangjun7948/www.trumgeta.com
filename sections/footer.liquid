@@ -166,7 +166,7 @@
         <div class="footer__aside-bottom">
           {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
             <div class="footer__payment-icons h-stack wrap gap-2">
-            {% assign enabled_payment_types = 'visa,master,american_express,paypal,jcb' | remove: ' ' | split: ',' %}
+            {% assign enabled_payment_types = 'visa,master,american_express,paypal,apple_pay,google_pay,shopify_pay' | remove: ' ' | split: ',' %}
 {% for type in enabled_payment_types %}
                 {{- type | payment_type_svg_tag -}}
               {%- endfor -%}
