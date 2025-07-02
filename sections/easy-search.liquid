@@ -1,0 +1,633 @@
+{% assign section_id = section.id %}
+<div class="easy-search-section easy-search-section-{{ section_id }}">
+  <div class="container">
+    {% if section.settings.section_title != blank %}
+      <div class="section-title-wrapper">
+        <h2 class="section-title">{{ section.settings.section_title }}</h2>
+      </div>
+    {% endif %}
+    
+
+    <div class="search-form-wrapper">
+      <form
+        class="vehicle-search-form vehicle-search-form-{{ section_id }}"
+        action="{{ routes.search_url }}"
+        method="get">
+                  <div class="search-fields">
+                        <div class="field-group">
+              {% comment %} 收集所有产品的车辆数据 {% endcomment %}
+              {% assign years = '' %}
+              {% assign makes = '' %}
+              {% assign all_vehicle_data = '' %}
+             
+              
+              {% for product in collections.all.products %}
+                {% if product.metafields.vehicle.year and product.metafields.vehicle.make and product.metafields.vehicle.model %}
+                  {% comment %} 处理 list.single_line_text_field 类型的元数据 {% endcomment %}
+                  {% assign year_array = product.metafields.vehicle.year.value %}
+                  {% assign make_array = product.metafields.vehicle.make.value %}
+                  {% assign model_array = product.metafields.vehicle.model.value %}
+                  
+                  {% comment %} 遍历所有可能的组合 {% endcomment %}
+                  {% for year in year_array %}
+                    {% assign year = year | strip %}
+                    {% if year != blank %}
+                      {% assign years = years | append: year | append: ',' %}
+                      
+                      {% for make in make_array %}
+                        {% assign make = make | strip %}
+                        {% if make != blank %}
+                          {% assign makes = makes | append: make | append: ',' %}
+                          
+                          {% for model in model_array %}
+                            {% assign model = model | strip %}
+                            {% if model != blank %}
+                              {% assign vehicle_entry = year | append: '|' | append: make | append: '|' | append: model %}
+                              {% assign all_vehicle_data = all_vehicle_data | append: vehicle_entry | append: ';' %}
+                            {% endif %}
+                          {% endfor %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+              
+              {% assign year_array = years | split: ',' | uniq | sort | reverse %}
+              
+              <label for="year-select-{{ section_id }}" class="field-label" style="font-size: {{ section.settings.field_label_size }}px;">Year</label>
+              <select
+                id="year-select-{{ section_id }}"
+                name="year"
+                class="search-select"
+                required>
+                <option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Year</option>
+                {% for year in year_array %}
+                  {% if year != blank %}
+                    <option value="{{ year }}" style="font-size: {{ section.settings.field_content_size }}px;">{{ year }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            <svg class="dropdown-icon" viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5z" />
+            </svg>
+          </div>
+
+          <div class="field-group">
+              <label for="make-select-{{ section_id }}" class="field-label" style="font-size: {{ section.settings.field_label_size }}px;">Make</label>
+              <select
+                id="make-select-{{ section_id }}"
+                name="make"
+                class="search-select"
+                disabled
+                required>
+                <option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Make</option>
+              </select>
+              <svg class="dropdown-icon" viewBox="0 0 24 24">
+                <path d="M7 10l5 5 5-5z" />
+              </svg>
+            </div>
+
+            <div class="field-group">
+              <label for="model-select-{{ section_id }}" class="field-label" style="font-size: {{ section.settings.field_label_size }}px;">Model</label>
+              <select
+                id="model-select-{{ section_id }}"
+                name="model"
+                class="search-select {% unless section.settings.show_search_button %}auto-search-field{% endunless %}"
+                disabled
+                required>
+                <option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Model</option>
+              </select>
+              <svg class="dropdown-icon" viewBox="0 0 24 24">
+                <path d="M7 10l5 5 5-5z" />
+              </svg>
+            </div>
+        </div>
+
+        {% if section.settings.show_search_button %}
+          <button type="submit" class="search-button">
+            <svg class="search-icon" viewBox="0 0 24 24">
+              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+            </svg>
+            Search
+          </button>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 将车辆数据和设置传递给JavaScript -->
+<script type="application/json" id="vehicle-data-{{ section_id }}">
+  {{ all_vehicle_data | json }}
+</script>
+
+<script type="application/json" id="search-settings-{{ section_id }}">
+  {
+    "showSearchButton": {{ section.settings.show_search_button | json }},
+    "searchUrl": {{ routes.search_url | json }},
+    "sectionId": {{ section_id | json }}
+  }
+</script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 使用IIFE隔离作用域，避免全局变量冲突
+    (function(sectionId) {
+          
+    // 从Liquid传递的数据中构建车辆数据结构
+    const vehicleDataString = document.getElementById('vehicle-data-' + sectionId).textContent;
+    const vehicleEntries = vehicleDataString.replace(/"/g, '').split(';').filter(entry => entry.trim() !== '');
+    
+    // 读取搜索设置
+    const searchSettings = JSON.parse(document.getElementById('search-settings-' + sectionId).textContent);
+    
+    // 构建车辆数据对象
+    const vehicleData = {};
+    
+    vehicleEntries.forEach(entry => {
+      const [yearRaw, make, model] = entry.split('|');
+      if (yearRaw && make && model) {
+        // 确保年份是字符串格式，与HTML select的value保持一致
+        const year = yearRaw.toString().trim();
+        
+        if (!vehicleData[year]) {
+          vehicleData[year] = {};
+        }
+        if (!vehicleData[year][make]) {
+          vehicleData[year][make] = [];
+        }
+        if (!vehicleData[year][make].includes(model)) {
+          vehicleData[year][make].push(model);
+        }
+      }
+    });
+
+
+        // 对每个品牌的车型进行排序
+    Object.keys(vehicleData).forEach(year => {
+      Object.keys(vehicleData[year]).forEach(make => {
+        vehicleData[year][make].sort();
+      });
+    });
+
+    const yearSelect = document.getElementById('year-select-' + sectionId);
+    const makeSelect = document.getElementById('make-select-' + sectionId);
+    const modelSelect = document.getElementById('model-select-' + sectionId);
+
+    // 执行搜索的函数
+    function performSearch() {
+      const year = yearSelect.value;
+      const make = makeSelect.value;
+      const model = modelSelect.value;
+
+      if (year && make && model) {
+        const searchQuery = `filter.p.m.vehicle.year=${year}&filter.p.m.vehicle.make=${make}&filter.p.m.vehicle.model=${model}`;
+        window.location.href = `collections/all?${searchQuery}`;
+        return true;
+      }
+      return false;
+    }
+  
+        // 年份选择改变时
+    yearSelect.addEventListener('change', function() {
+      const selectedYear = this.value;
+            
+      // 重置make和model
+      makeSelect.innerHTML = '<option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Make</option>';
+      modelSelect.innerHTML = '<option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Model</option>';
+      modelSelect.disabled = true;
+
+      if (selectedYear) {
+        // 尝试字符串和数字两种格式
+        const yearData = vehicleData[selectedYear] || vehicleData[parseInt(selectedYear)] || vehicleData[selectedYear.toString()];
+        
+        if (yearData) {
+          makeSelect.disabled = false; // 明确启用make选择框
+          const makes = Object.keys(yearData).sort();
+                 
+          makes.forEach(make => {
+            const option = document.createElement('option');
+            option.value = make;
+            option.textContent = make;
+            option.style.fontSize = '{{ section.settings.field_content_size }}px';
+            makeSelect.appendChild(option);
+          });
+        } else {
+          makeSelect.disabled = true;       
+        }
+      } else {
+        makeSelect.disabled = true;
+      }
+    });
+  
+    // 品牌选择改变时
+    makeSelect.addEventListener('change', function() {
+      const selectedYear = yearSelect.value;
+      const selectedMake = this.value;
+      
+      // 重置model
+      modelSelect.innerHTML = '<option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Model</option>';
+      modelSelect.disabled = !selectedMake;
+  
+      if (selectedYear && selectedMake && vehicleData[selectedYear] && vehicleData[selectedYear][selectedMake]) {
+        const models = vehicleData[selectedYear][selectedMake];
+        models.forEach(model => {
+          const option = document.createElement('option');
+          option.value = model;
+          option.textContent = model;
+          option.style.fontSize = '{{ section.settings.field_content_size }}px';
+          modelSelect.appendChild(option);
+        });
+      }
+    });
+
+    // 型号选择改变时的处理
+    modelSelect.addEventListener('change', function() {
+      const selectedModel = this.value;
+      
+            // 如果没有显示搜索按钮且所有字段都已选择，自动执行搜索
+      if (!searchSettings.showSearchButton && selectedModel) {
+        setTimeout(() => {
+          if (performSearch()) {
+          } else {    
+          }
+        }, 100); // 小延迟确保UI更新完成
+      }
+    });
+  
+        // 表单提交处理
+    document.querySelector('.vehicle-search-form-' + sectionId).addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // 如果显示搜索按钮，处理表单提交
+      if (searchSettings.showSearchButton) {
+        if (!performSearch()) {
+          alert('请选择年份、品牌和型号。');
+        }
+      }
+      // 如果不显示搜索按钮，表单提交被禁用（通过preventDefault已经阻止了默认行为）
+    });
+    
+    })('{{ section_id }}'); // 传入section ID作为参数
+  });
+</script>
+
+<style>
+  .easy-search-section-{{ section_id }} {
+    background: {{ section.settings.background_color | default: '#e3c9c2' }};   
+    min-height: {{ section.settings.section_height | default: 300 }}px;
+    padding: {{ section.settings.padding_top | default: 60 }}px 0 {{ section.settings.padding_bottom | default: 60 }}px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .easy-search-section-{{ section_id }} .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+  }
+
+  .easy-search-section-{{ section_id }} .section-title-wrapper {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .easy-search-section-{{ section_id }} .section-title {
+    font-family: var(--heading-font-family);
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .easy-search-section-{{ section_id }} .search-form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .easy-search-section-{{ section_id }} .vehicle-search-form {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  {% unless section.settings.show_search_button %}
+  .easy-search-section-{{ section_id }} .vehicle-search-form .search-fields {
+    justify-content: center;
+  }
+  
+  .easy-search-section-{{ section_id }} .vehicle-search-form {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  {% endunless %}
+
+  .easy-search-section-{{ section_id }} .search-fields {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .easy-search-section-{{ section_id }} .field-group {
+    position: relative;
+    min-width: 200px;
+    z-index: 1;
+  }
+
+  .easy-search-section-{{ section_id }} .field-group:focus-within {
+    z-index: 10;
+  }
+
+  .easy-search-section-{{ section_id }} .field-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 18px;
+    font-family: var(--heading-font-family);
+  }
+
+  .easy-search-section-{{ section_id }} .search-select {
+    width: 100%;
+    padding: 10px 50px 10px 20px;
+    border: none;
+    border-radius: 25px;
+    background: {{ section.settings.field_background | default: '#ffffff' }};
+    font-size: 16px;
+    color: #666;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    appearance: none;
+    cursor: pointer;   
+    box-sizing: border-box;
+  }
+
+  /* .easy-search-section-{{ section_id }} .search-select:hover:not(:focus) {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  } */
+
+  .easy-search-section-{{ section_id }} .search-select:focus {
+    outline: none;
+  }
+
+  .easy-search-section-{{ section_id }} .search-select:disabled {
+    background: #f8f9fa !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    opacity: 0.7 !important;
+  }
+
+  .easy-search-section-{{ section_id }} .search-select:not(:disabled) {
+    background: {{ section.settings.field_background | default: '#ffffff' }} !important;
+    cursor: pointer !important;
+  }
+
+  .easy-search-section-{{ section_id }} .dropdown-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    fill: #666;
+    pointer-events: none;
+    margin-top: 14px;
+  }
+
+  .easy-search-section-{{ section_id }} .search-button {
+    background: {{ section.settings.button_color | default: '#007bff' }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    border: none;
+    border-radius: 25px;
+    padding: 10px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  }
+
+  /* .easy-search-section-{{ section_id }} .search-button:hover {
+    background: {{ section.settings.button_color | color_darken: 15 | default: '#0056b3' }};
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+  } */
+
+  .easy-search-section-{{ section_id }} .search-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  @media (max-width: 768px) {
+    .easy-search-section-{{ section_id }} .vehicle-search-form {
+      flex-direction: column;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .easy-search-section-{{ section_id }} .search-fields {
+      flex-direction: column;
+      width: 100%;
+      gap: 15px;
+    }
+
+    .easy-search-section-{{ section_id }} .field-group {
+      min-width: auto;
+      width: 100%;
+    }
+
+    .easy-search-section-{{ section_id }} .search-button {
+      width: 100%;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .easy-search-section-{{ section_id }} {
+      padding: {{ section.settings.padding_top | divided_by: 1.5 | round }}px 0 {{ section.settings.padding_bottom | divided_by: 1.5 | round }}px 0;
+    }
+
+    .easy-search-section-{{ section_id }} .section-title-wrapper {
+      margin-bottom: 30px;
+    }
+
+    .easy-search-section-{{ section_id }} .section-title {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .easy-search-section-{{ section_id }} .container {
+      padding: 0 15px;
+    }
+
+    .easy-search-section-{{ section_id }} .field-label {
+      font-size: 16px;
+    }
+
+    .easy-search-section-{{ section_id }} .search-select {
+      padding: 14px 45px 14px 16px;
+      font-size: 15px;
+      min-height: 50px;
+    }
+
+    .easy-search-section-{{ section_id }} .search-button {
+      padding: 14px 28px;
+      font-size: 15px;
+      min-height: 50px;
+    }
+
+    .easy-search-section-{{ section_id }} .dropdown-icon {
+      width: 18px;
+      height: 18px;
+      right: 16px;
+    }
+
+    .easy-search-section-{{ section_id }} .section-title-wrapper {
+      margin-bottom: 20px;
+    }
+
+    .easy-search-section-{{ section_id }} .section-title {
+      font-size: 1.8rem;
+    }
+  }
+
+  /* 自动搜索提示样式 */
+  .easy-search-section-{{ section_id }} .auto-search-hint {
+    font-size: 0.75em;
+    color: #007bff;
+    font-weight: normal;
+    margin-left: 5px;
+  }
+
+  .easy-search-section-{{ section_id }} .auto-search-field {
+    position: relative;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Easy Search",
+  "tag": "section",
+  "class": "shopify-section--easy-search",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Find Your Vehicle"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#e3c9c2"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "Section Height",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Search Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search_button",
+      "label": "Show Search Button",
+      "default": true,
+      "info": "When disabled, search will automatically trigger when Model is selected"
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Search Button Color",
+      "default": "#007bff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Field Settings"
+    },
+    {
+      "type": "range",
+      "id": "field_label_size",
+      "label": "Field Label Size",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "field_background",
+      "label": "Field Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "field_content_size",
+      "label": "Field Content Size",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vehicle Search"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,287 @@
+{
+  "article": [],
+  "blog": [],
+  "collection": [],
+  "company": [],
+  "company_location": [],
+  "location": [],
+  "market": [],
+  "order": [],
+  "page": [],
+  "product": [
+    {
+      "key": "snowboard_length",
+      "namespace": "test_data",
+      "name": "Snowboard length",
+      "description": "The length of the snowboard",
+      "type": {
+        "name": "dimension",
+        "category": "MEASUREMENT"
+      }
+    },
+    {
+      "key": "binding_mount",
+      "namespace": "test_data",
+      "name": "Snowboard binding mount",
+      "description": "The type of binding mount used on the snowboard",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "test",
+      "namespace": "custom",
+      "name": "test",
+      "description": "",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "pictest",
+      "namespace": "custom",
+      "name": "tupian",
+      "description": "",
+      "type": {
+        "name": "list.file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "short_description",
+      "namespace": "custom",
+      "name": "短描述",
+      "description": "",
+      "type": {
+        "name": "multi_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "test1",
+      "namespace": "custom",
+      "name": "test1",
+      "description": "test1",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_product",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Product",
+      "description": "Use to indicate whether or not the unique product identifiers (UPIs) GTIN, MPN, and brand are available for your product.",
+      "type": {
+        "name": "boolean",
+        "category": "TRUE_FALSE"
+      }
+    },
+    {
+      "key": "universal",
+      "namespace": "vehicle",
+      "name": "vehicle.universal",
+      "description": "vehicle.universal",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "queries",
+      "namespace": "shopify--discovery--product_search_boost",
+      "name": "搜索产品提升",
+      "description": "产品可在搜索结果中获得更高排名的搜索查询的列表",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "related_products",
+      "namespace": "shopify--discovery--product_recommendation",
+      "name": "相关产品",
+      "description": "相关产品列表",
+      "type": {
+        "name": "list.product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "related_products_display",
+      "namespace": "shopify--discovery--product_recommendation",
+      "name": "相关产品设置",
+      "description": "确定如何显示相关产品以及算法产品推荐",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "complementary_products",
+      "namespace": "shopify--discovery--product_recommendation",
+      "name": "互补产品",
+      "description": "互补产品列表",
+      "type": {
+        "name": "list.product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "year",
+      "namespace": "vehicle",
+      "name": "vehicle.year",
+      "description": "",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "make",
+      "namespace": "vehicle",
+      "name": "vehicle.make",
+      "description": "",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "model",
+      "namespace": "vehicle",
+      "name": "vehicle.model",
+      "description": "",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    }
+  ],
+  "variant": [
+    {
+      "key": "custom_label_4",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 4",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_label_3",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 3",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_label_2",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 2",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_label_1",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 1",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_label_0",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Custom Label 0",
+      "description": "Label that you assign to a product to help organize bidding and reporting in Shopping campaigns.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "size_system",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Size System",
+      "description": "The country of the size system used by your product.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "size_type",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Size Type",
+      "description": "Your apparel product’s cut.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "mpn",
+      "namespace": "mm-google-shopping",
+      "name": "Google: MPN",
+      "description": "Your product’s Manufacturer Part Number (MPN).",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "gender",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Gender",
+      "description": "The gender for which your product is intended.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "condition",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Condition",
+      "description": "The condition of your product at time of sale.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "age_group",
+      "namespace": "mm-google-shopping",
+      "name": "Google: Age Group",
+      "description": "The demographic for which your product is intended.",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    }
+  ],
+  "shop": [
+    {
+      "key": "alpine_sports",
+      "namespace": "test_data",
+      "name": "Alpine sport types",
+      "description": "The set of alpine sports that this sport shop specializes in",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    }
+  ]
+}
