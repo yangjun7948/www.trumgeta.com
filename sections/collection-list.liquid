@@ -52,12 +52,23 @@ LIQUID
 
             <a {% if collection_url != blank %}href="{{ collection_url }}"{% endif %} class="collection-card {% if block.settings.text_position contains 'place-self-end' %}collection-card--reverse-transition{% endif %} shadow" reveal-js>
               <div class="content-over-media group rounded-sm" style="--content-over-media-overlay: {{ block.settings.overlay_color.rgb }} / {{ block.settings.overlay_opacity | divided_by: 100.0 }}">
-                {%- if collection != blank or block.settings.image != blank -%}
-                  {%- assign image = block.settings.image | default: collection.featured_image -%}
+                {%- if collection != blank or block.settings.image != blank or block.settings.mobile_image != blank -%}
+                  {%- assign desktop_image = block.settings.image | default: collection.featured_image -%}
 
-                  {%- if image != blank -%}
-                    {%- capture sizes -%}(max-width: 699px) 73vw, {{ settings.page_width | divided_by: section.settings.collections_per_row }}px{%- endcapture -%}
-                    {{- image | image_url: width: image.width | image_tag: loading: 'lazy', sizes: sizes, widths: '200,300,400,500,600,800,1000,1200,1400,1600', class: 'zoom-image' -}}
+                  {%- if desktop_image != blank -%}
+                    <picture>
+                      {%- if block.settings.mobile_image != blank -%}
+                        <source
+                          media="(max-width: 599px)"
+                          srcset="{{ block.settings.mobile_image | image_url: width: '300x' }} 300w"
+                          width="{{ block.settings.mobile_image.width }}"
+                          height="{{ block.settings.mobile_image.height }}"
+                        >
+                      {%- endif -%}
+                      
+                      {%- capture sizes -%}(max-width: 599px) 73vw, {{ settings.page_width | divided_by: section.settings.collections_per_row }}px{%- endcapture -%}
+                      {{- desktop_image | image_url: width: desktop_image.width | image_tag: loading: 'lazy', sizes: sizes, widths: '200,300,400,500,600,800,1000,1200,1400,1600', class: 'zoom-image' -}}
+                    </picture>
                   {%- endif -%}
 
                   <div class="collection-card__content-wrapper text-custom {{ block.settings.text_position }}" style="--text-color: {{ block.settings.text_color.rgb }}">
@@ -231,6 +242,13 @@ LIQUID
           "label": "Image",
           "info": "1500 x 1800px .jpg recommended. Default to collection image."
         },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile image",
+          "info": "1125 x 1350px .jpg recommended. If not set, desktop image will be used."
+        },
+        
         {
           "type": "text",
           "id": "subheading",

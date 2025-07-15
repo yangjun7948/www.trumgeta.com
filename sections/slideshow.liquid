@@ -75,8 +75,8 @@ LIQUID
               <picture>
                 {%- if block.settings.mobile_image != blank -%}
                   <source
-                    media="(max-width: 699px)"
-                    srcset="{{ block.settings.mobile_image | image_url: width: '400x' }} 400w, {{ block.settings.mobile_image | image_url: width: '600x' }} 600w, {{ block.settings.mobile_image | image_url: width: '800x' }} 800w, {{ block.settings.mobile_image | image_url: width: '1000x' }} 1000w, {{ block.settings.mobile_image | image_url: width: '1200x' }} 1200w"
+                    media="(max-width: 599px)"
+                    srcset="{{ block.settings.mobile_image | image_url: width: '400x' }} 400w"
                     width="{{ block.settings.mobile_image.width }}"
                     height="{{ block.settings.mobile_image.height }}"
                   >
@@ -129,7 +129,7 @@ LIQUID
       {%- endcapture -%}
 
       {%- if block.settings.button_link != blank and block.settings.button_text == blank -%}
-        <a id="block-{{ block.id }}" href="{{ block.settings.button_link }}" class="slideshow__slide {% if forloop.first %}is-selected{% endif %}" data-slide-type="{{ block.type }}" role="group" {{ block.shopify_attributes }}>
+        <a id="block-{{ block.id }}" aria-label="Go to {{ block.settings.title }}" href="{{ block.settings.button_link }}" class="slideshow__slide {% if forloop.first %}is-selected{% endif %}" data-slide-type="{{ block.type }}" role="group" {{ block.shopify_attributes }}>
           {{- slide -}}
         </a>
       {%- else -%}

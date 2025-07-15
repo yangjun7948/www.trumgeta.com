@@ -126,7 +126,8 @@
   {
     "showSearchButton": {{ section.settings.show_search_button | json }},
     "searchUrl": {{ routes.search_url | json }},
-    "sectionId": {{ section_id | json }}
+    "sectionId": {{ section_id | json }},
+    "collectionMappings": {{ section.settings.collection_mappings | json }}
   }
 </script>
 
@@ -141,6 +142,67 @@
     
     // 读取搜索设置
     const searchSettings = JSON.parse(document.getElementById('search-settings-' + sectionId).textContent);
+    
+    // 解析集合映射配置
+    const collectionMappings = [];
+    if (searchSettings.collectionMappings) {
+      const mappingsString = searchSettings.collectionMappings.trim();
+      if (mappingsString) {
+        const mappingEntries = mappingsString.split(',').map(entry => entry.trim());
+        mappingEntries.forEach(entry => {
+          // 解析格式: "2001-2003 make model"
+          const parts = entry.split(' ');
+          if (parts.length >= 3) {
+            const yearRange = parts[0];
+            const make = parts[1];
+            const model = parts.slice(2).join(' ');
+            
+            // 解析年份范围
+            if (yearRange.includes('-')) {
+              const [startYear, endYear] = yearRange.split('-').map(y => parseInt(y.trim()));
+              if (!isNaN(startYear) && !isNaN(endYear)) {
+                collectionMappings.push({
+                  yearRange: [startYear, endYear],
+                  make: make.toLowerCase(),
+                  model: model.toLowerCase(),
+                  collectionName: entry
+                });
+              }
+            } else {
+              // 单个年份
+              const year = parseInt(yearRange);
+              if (!isNaN(year)) {
+                collectionMappings.push({
+                  yearRange: [year, year],
+                  make: make.toLowerCase(),
+                  model: model.toLowerCase(),
+                  collectionName: entry
+                });
+              }
+            }
+          }
+        });
+      }
+    }
+    
+    // 检查是否匹配某个集合
+    function findMatchingCollection(year, make, model) {
+      const yearNum = parseInt(year);
+      const makeLower = make.toLowerCase();
+      const modelLower = model.toLowerCase();
+      
+      for (const mapping of collectionMappings) {
+        const [startYear, endYear] = mapping.yearRange;
+        const isYearInRange = yearNum >= startYear && yearNum <= endYear;
+        const isMakeMatch = mapping.make === 'make' || mapping.make === makeLower;
+        const isModelMatch = mapping.model === 'model' || mapping.model === modelLower;
+        
+        if (isYearInRange && isMakeMatch && isModelMatch) {
+          return mapping.collectionName;
+        }
+      }
+      return null;
+    }
     
     // 构建车辆数据对象
     const vehicleData = {};
@@ -182,8 +244,19 @@
       const model = modelSelect.value;
 
       if (year && make && model) {
-        const searchQuery = `filter.p.m.vehicle.year=${year}&filter.p.m.vehicle.make=${make}&filter.p.m.vehicle.model=${model}`;
-        window.location.href = `collections/all?${searchQuery}`;
+        // 检查是否匹配某个集合
+        const matchingCollection = findMatchingCollection(year, make, model);
+        
+        if (matchingCollection) {
+          // 如果匹配到集合，跳转到集合页面
+          // 将集合名称转换为URL友好的格式
+          const collectionHandle = matchingCollection.toLowerCase().replace(/\s+/g, '-');
+          window.location.href = `collections/${collectionHandle}`;
+        } else {
+          // 否则使用原有的搜索逻辑
+          const searchQuery = `filter.p.m.vehicle.year=${year}&filter.p.m.vehicle.make=${make}&filter.p.m.vehicle.model=${model}`;
+          window.location.href = `collections/all?${searchQuery}`;
+        }
         return true;
       }
       return false;
@@ -576,6 +649,13 @@
       "label": "Show Search Button",
       "default": true,
       "info": "When disabled, search will automatically trigger when Model is selected"
+    },
+    {
+      "type": "textarea",
+      "id": "collection_mappings",
+      "label": "Collection Mappings",
+      "info": "Enter collection mappings in format: [2001-2003 make model, 2003-2005 make model]. Each mapping should be separated by comma.",
+      "placeholder": "2001-2003 make model, 2003-2005 make model"
     },
     {
       "type": "header",

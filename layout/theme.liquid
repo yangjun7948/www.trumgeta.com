@@ -1,26 +1,33 @@
 {%- comment -%}
-------------------------------------------------------------------------------------------------------------------------
-NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing this theme as much as we did for
+  ------------------------------------------------------------------------------------------------------------------------
+  NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing this theme as much as we did for
   developing it. We have put a lot of work to make this theme as developer friendly as possible by offering you
   hooks to integrate into critical parts of the theme. You will find the complete technical documentation (including
   all events, dependencies...) in the "documentation.txt" file, located in the Assets folder.
-------------------------------------------------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------------------------------------------------
 {%- endcomment -%}
 
-<script src="https://plugin-code.salesmartly.com/js/project_349577_359092_1748935993.js"></script>
+{% comment %} <script src="https://plugin-code.salesmartly.com/js/project_349577_359092_1748935993.js" defer></script> {% endcomment %}
 
 <!doctype html>
 
 <html lang="{{ request.locale.iso_code }}" dir="{% render 'direction' %}">
   <head>
-	<!-- Added by AVADA SEO Suite -->
-	{% include 'avada-seo' %}
-	<!-- /Added by AVADA SEO Suite -->
+    <!-- Added by AVADA SEO Suite -->
+    {% include 'avada-seo' %}
+    <!-- /Added by AVADA SEO Suite -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=5.0">
     <meta name="theme-color" content="{{ settings.header_background }}">
 
-    <title>{% if page_title == blank %}{{ shop.name }}{% else %}{{ page_title }}{% if current_page != 1 %} &ndash; {{ 'general.page' | t: page: current_page }}{% endif %}{% endif %}</title>
+    <title>
+      {% if page_title == blank %}
+        {{ shop.name }}
+      {% else %}
+        {{ page_title }}{% if current_page != 1 %}
+          &ndash; {{ 'general.page' | t: page: current_page }}{% endif %}
+      {% endif %}
+    </title>
 
     {%- if page_description -%}
       <meta name="description" content="{{ page_description | escape }}">
@@ -35,15 +42,28 @@ NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing
 
     {%- comment -%}Few prefetch to increase performance on commonly used third-parties{%- endcomment -%}
     <link rel="preconnect" href="https://cdn.shopify.com">
-    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    <link
+      rel="preconnect"
+      href="https://fonts.shopifycdn.com"
+      crossorigin>
     <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
 
     {%- unless settings.heading_font.system? -%}
-      <link rel="preload" href="{{ settings.heading_font | font_url }}" as="font" type="font/woff2" crossorigin>
+      <link
+        rel="preload"
+        href="{{ settings.heading_font | font_url }}"
+        as="font"
+        type="font/woff2"
+        crossorigin>
     {%- endunless -%}
 
     {%- unless settings.text_font.system? -%}
-      <link rel="preload" href="{{ settings.text_font | font_url }}" as="font" type="font/woff2" crossorigin>
+      <link
+        rel="preload"
+        href="{{ settings.text_font | font_url }}"
+        as="font"
+        type="font/woff2"
+        crossorigin>
     {%- endunless -%}
 
     {%- render 'social-meta-tags' -%}
@@ -59,12 +79,12 @@ NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing
 
     {{- 'theme.css' | asset_url | stylesheet_tag: preload: true -}}
     <style>
-  {% if template == 'index' %}
-    .hide-breadcrumbs {
-      display: none;
-    }
-  {% endif %}
-</style>
+      {% if template == 'index' %}
+        .hide-breadcrumbs {
+          display: none;
+        }
+      {% endif %}
+    </style>
   </head>
 
   <body class="{% if settings.show_page_transition %}page-transition{% endif %} {% if settings.zoom_image_on_hover %}zoom-image--enabled{% endif %}">
@@ -75,10 +95,10 @@ NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing
     {%- if request.page_type != 'password' -%}
       {%- sections 'header-group' -%}
       <div class="{% if template == 'index' %}hide-breadcrumbs{% endif %}">
-  {% section 'breadcrumbs' %}
-</div>
+        {% section 'breadcrumbs' %}
+      </div>
 
-      
+
       {%- sections 'overlay-group' -%}
 
       {%- if settings.cart_type == 'popover' -%}
@@ -90,23 +110,31 @@ NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing
       {%- section 'account-banner' -%}
     {%- endif -%}
 
-    <main role="main" id="main" class="anchor">
+    <main
+      role="main"
+      id="main"
+      class="anchor">
       {{ content_for_layout }}
 
       {%- comment -%}
-      IMPLEMENTATION NOTE: due to the very complex logic of margin/padding collapsing in Impact, the footer group is
-      added into the main element to ensure that dynamic sections added into the footer group are properly laid out.
+        IMPLEMENTATION NOTE: due to the very complex logic of margin/padding collapsing in Impact, the footer group is
+        added into the main element to ensure that dynamic sections added into the footer group are properly laid out.
       {%- endcomment -%}
       {%- if request.page_type != 'password' -%}
         {%- sections 'footer-group' -%}
       {%- endif -%}
     </main>
 
-    <!-- back to top  -->
-  <div id="back-to-top" class="back-to-top" >
-    <a href="#" aria-label="Back to Top">            
-       <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z"/></svg>  
-    </a>
-  </div>
+    <!-- back to top -->
+    <div id="back-to-top" class="back-to-top">
+      <a href="#" aria-label="Back to Top">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="28px"
+          viewBox="0 -960 960 960"
+          width="28px"
+          fill="currentColor"><path d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z" /></svg>
+      </a>
+    </div>
   </body>
 </html>
