@@ -80,16 +80,6 @@
       }
     },
     {
-      "key": "universal",
-      "namespace": "vehicle",
-      "name": "vehicle.universal",
-      "description": "vehicle.universal",
-      "type": {
-        "name": "single_line_text_field",
-        "category": "TEXT"
-      }
-    },
-    {
       "key": "queries",
       "namespace": "shopify--discovery--product_search_boost",
       "name": "搜索产品提升",
@@ -157,6 +147,16 @@
       "type": {
         "name": "list.single_line_text_field",
         "category": "TEXT"
+      }
+    },
+    {
+      "key": "universal",
+      "namespace": "vehicle",
+      "name": "vehicle.universal",
+      "description": "",
+      "type": {
+        "name": "boolean",
+        "category": "TRUE_FALSE"
       }
     }
   ],

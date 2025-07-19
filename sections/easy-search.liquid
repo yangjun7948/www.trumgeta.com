@@ -12,95 +12,120 @@
       <form
         class="vehicle-search-form vehicle-search-form-{{ section_id }}"
         action="{{ routes.search_url }}"
-        method="get">
+        method="get"
+        autocomplete="off">
                   <div class="search-fields">
                         <div class="field-group">
-              {% comment %} 收集所有产品的车辆数据 {% endcomment %}
+              {% comment %} 从 collectionMappings 获取车辆数据 {% endcomment %}
               {% assign years = '' %}
               {% assign makes = '' %}
               {% assign all_vehicle_data = '' %}
              
-              
-              {% for product in collections.all.products %}
-                {% if product.metafields.vehicle.year and product.metafields.vehicle.make and product.metafields.vehicle.model %}
-                  {% comment %} 处理 list.single_line_text_field 类型的元数据 {% endcomment %}
-                  {% assign year_array = product.metafields.vehicle.year.value %}
-                  {% assign make_array = product.metafields.vehicle.make.value %}
-                  {% assign model_array = product.metafields.vehicle.model.value %}
-                  
-                  {% comment %} 遍历所有可能的组合 {% endcomment %}
-                  {% for year in year_array %}
-                    {% assign year = year | strip %}
-                    {% if year != blank %}
-                      {% assign years = years | append: year | append: ',' %}
+              {% comment %} 解析 collectionMappings 来构建车辆数据 {% endcomment %}
+              {% if section.settings.collection_mappings != blank %}
+                {% assign mappings_string = section.settings.collection_mappings | strip %}
+                {% assign mapping_entries = mappings_string | split: ',' %}
+                
+                {% for entry in mapping_entries %}
+                  {% assign entry = entry | strip %}
+                  {% if entry != blank %}
+                    {% assign parts = entry | split: '_' %}
+                    {% if parts.size >= 3 %}
+                      {% assign year_range = parts[0] %}
+                      {% assign make = parts[1] %}
+                      {% assign model = parts[2] %}
                       
-                      {% for make in make_array %}
-                        {% assign make = make | strip %}
-                        {% if make != blank %}
-                          {% assign makes = makes | append: make | append: ',' %}
-                          
-                          {% for model in model_array %}
-                            {% assign model = model | strip %}
-                            {% if model != blank %}
-                              {% assign vehicle_entry = year | append: '|' | append: make | append: '|' | append: model %}
-                              {% assign all_vehicle_data = all_vehicle_data | append: vehicle_entry | append: ';' %}
-                            {% endif %}
-                          {% endfor %}
-                        {% endif %}
-                      {% endfor %}
+                      {% comment %} 解析年份范围 {% endcomment %}
+                      {% if year_range contains '+' %}
+                        {% comment %} 处理 2024+ 格式 {% endcomment %}
+                        {% assign start_year = year_range | replace: '+', '' | plus: 0 %}
+                        {% assign current_year = 'now' | date: '%Y' | plus: 0 %}
+                        {% for year in (start_year..current_year) %}
+                          {% assign years = years | append: year | append: ',' %}
+                          {% assign vehicle_entry = year | append: '|' | append: make | append: '|' | append: model %}
+                          {% assign all_vehicle_data = all_vehicle_data | append: vehicle_entry | append: ';' %}
+                        {% endfor %}
+                      {% elsif year_range contains '-' %}
+                        {% comment %} 处理 2021-2023 格式 {% endcomment %}
+                        {% assign year_parts = year_range | split: '-' %}
+                        {% assign start_year = year_parts[0] | plus: 0 %}
+                        {% assign end_year = year_parts[1] | plus: 0 %}
+                        {% for year in (start_year..end_year) %}
+                          {% assign years = years | append: year | append: ',' %}
+                          {% assign vehicle_entry = year | append: '|' | append: make | append: '|' | append: model %}
+                          {% assign all_vehicle_data = all_vehicle_data | append: vehicle_entry | append: ';' %}
+                        {% endfor %}
+                      {% else %}
+                        {% comment %} 单个年份 {% endcomment %}
+                        {% assign year = year_range | plus: 0 %}
+                        {% assign years = years | append: year | append: ',' %}
+                        {% assign vehicle_entry = year | append: '|' | append: make | append: '|' | append: model %}
+                        {% assign all_vehicle_data = all_vehicle_data | append: vehicle_entry | append: ';' %}
+                      {% endif %}
+                      
+                      {% assign makes = makes | append: make | append: ',' %}
                     {% endif %}
-                  {% endfor %}
-                {% endif %}
-              {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
               
               {% assign year_array = years | split: ',' | uniq | sort | reverse %}
               
               <label for="year-select-{{ section_id }}" class="field-label" style="font-size: {{ section.settings.field_label_size }}px;">Year</label>
-              <select
+              <div style="position: relative;">
+                              <select
                 id="year-select-{{ section_id }}"
                 name="year"
                 class="search-select"
+                autocomplete="off"
                 required>
-                <option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Year</option>
-                {% for year in year_array %}
-                  {% if year != blank %}
-                    <option value="{{ year }}" style="font-size: {{ section.settings.field_content_size }}px;">{{ year }}</option>
-                  {% endif %}
-                {% endfor %}
-              </select>
-            <svg class="dropdown-icon" viewBox="0 0 24 24">
-              <path d="M7 10l5 5 5-5z" />
-            </svg>
+                  <option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Year</option>
+                  {% for year in year_array %}
+                    {% if year != blank %}
+                      <option value="{{ year }}" style="font-size: {{ section.settings.field_content_size }}px;">{{ year }}</option>
+                    {% endif %}
+                  {% endfor %}              
+                </select>
+                <svg class="dropdown-icon" viewBox="0 0 24 24">
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
+              </div>
           </div>
 
           <div class="field-group">
               <label for="make-select-{{ section_id }}" class="field-label" style="font-size: {{ section.settings.field_label_size }}px;">Make</label>
-              <select
-                id="make-select-{{ section_id }}"
-                name="make"
-                class="search-select"
-                disabled
-                required>
+              <div style="position: relative;">
+                              <select
+                  id="make-select-{{ section_id }}"
+                  name="make"
+                  class="search-select"
+                  autocomplete="off"
+                  disabled
+                  required>
                 <option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Make</option>
               </select>
               <svg class="dropdown-icon" viewBox="0 0 24 24">
                 <path d="M7 10l5 5 5-5z" />
               </svg>
+              </div>
             </div>
 
             <div class="field-group">
               <label for="model-select-{{ section_id }}" class="field-label" style="font-size: {{ section.settings.field_label_size }}px;">Model</label>
-              <select
-                id="model-select-{{ section_id }}"
-                name="model"
-                class="search-select {% unless section.settings.show_search_button %}auto-search-field{% endunless %}"
-                disabled
-                required>
+              <div style="position: relative;">
+                              <select
+                  id="model-select-{{ section_id }}"
+                  name="model"
+                  class="search-select {% unless section.settings.show_search_button %}auto-search-field{% endunless %}"
+                  autocomplete="off"
+                  disabled
+                  required>
                 <option value="" style="font-size: {{ section.settings.field_content_size }}px;">Select Model</option>
               </select>
               <svg class="dropdown-icon" viewBox="0 0 24 24">
                 <path d="M7 10l5 5 5-5z" />
               </svg>
+              </div>
             </div>
         </div>
 
@@ -138,27 +163,40 @@
           
     // 从Liquid传递的数据中构建车辆数据结构
     const vehicleDataString = document.getElementById('vehicle-data-' + sectionId).textContent;
-    const vehicleEntries = vehicleDataString.replace(/"/g, '').split(';').filter(entry => entry.trim() !== '');
+    const vehicleEntries = vehicleDataString.replace(/"/g, '').replace(/\\\//g, '/').split(';').filter(entry => entry.trim() !== '');
     
     // 读取搜索设置
     const searchSettings = JSON.parse(document.getElementById('search-settings-' + sectionId).textContent);
     
-    // 解析集合映射配置
+    // 解析集合映射配置 - 更新为新格式
     const collectionMappings = [];
     if (searchSettings.collectionMappings) {
       const mappingsString = searchSettings.collectionMappings.trim();
       if (mappingsString) {
         const mappingEntries = mappingsString.split(',').map(entry => entry.trim());
         mappingEntries.forEach(entry => {
-          // 解析格式: "2001-2003 make model"
-          const parts = entry.split(' ');
+          // 解析格式: "2021-2023_Ford_F150" 或 "2024+_Toyota_Tacoma"
+          const parts = entry.split('_');
           if (parts.length >= 3) {
             const yearRange = parts[0];
             const make = parts[1];
-            const model = parts.slice(2).join(' ');
+            const model = parts.slice(2).join('_'); // 支持型号名称中包含下划线
             
             // 解析年份范围
-            if (yearRange.includes('-')) {
+            if (yearRange.includes('+')) {
+              // 处理 2024+ 格式
+              const startYear = parseInt(yearRange.replace('+', ''));
+              const currentYear = new Date().getFullYear();
+              if (!isNaN(startYear)) {
+                collectionMappings.push({
+                  yearRange: [startYear, currentYear],
+                  make: make.toLowerCase(),
+                  model: model.toLowerCase(),
+                  collectionName: entry
+                });
+              }
+            } else if (yearRange.includes('-')) {
+              // 处理 2021-2023 格式
               const [startYear, endYear] = yearRange.split('-').map(y => parseInt(y.trim()));
               if (!isNaN(startYear) && !isNaN(endYear)) {
                 collectionMappings.push({
@@ -194,11 +232,16 @@
       for (const mapping of collectionMappings) {
         const [startYear, endYear] = mapping.yearRange;
         const isYearInRange = yearNum >= startYear && yearNum <= endYear;
-        const isMakeMatch = mapping.make === 'make' || mapping.make === makeLower;
-        const isModelMatch = mapping.model === 'model' || mapping.model === modelLower;
+        const isMakeMatch = mapping.make === makeLower;
+        const isModelMatch = mapping.model === modelLower;
         
         if (isYearInRange && isMakeMatch && isModelMatch) {
-          return mapping.collectionName;
+          // 处理跳转地址转换：2024+_Toyota_Tacoma -> 2024-_Toyota_Tacoma
+          let collectionName = mapping.collectionName;
+          if (collectionName.includes('+')) {
+            collectionName = collectionName.replace('+', '-');
+          }
+          return collectionName;
         }
       }
       return null;
@@ -225,8 +268,7 @@
       }
     });
 
-
-        // 对每个品牌的车型进行排序
+    // 对每个品牌的车型进行排序
     Object.keys(vehicleData).forEach(year => {
       Object.keys(vehicleData[year]).forEach(make => {
         vehicleData[year][make].sort();
@@ -236,6 +278,23 @@
     const yearSelect = document.getElementById('year-select-' + sectionId);
     const makeSelect = document.getElementById('make-select-' + sectionId);
     const modelSelect = document.getElementById('model-select-' + sectionId);
+
+    // 检查页面加载时是否有浏览器记忆的表单状态
+    function checkInitialFormState() {
+      // 如果年份已经有值（浏览器记忆），触发相应的更新逻辑
+      if (yearSelect.value) {
+        // 触发年份变化事件来更新make选择框
+        yearSelect.dispatchEvent(new Event('change'));
+        
+        // 使用setTimeout确保year change事件处理完成后再检查make
+        setTimeout(() => {
+          if (makeSelect.value) {
+            // 触发make变化事件来更新model选择框
+            makeSelect.dispatchEvent(new Event('change'));
+          }
+        }, 50);
+      }
+    }
 
     // 执行搜索的函数
     function performSearch() {
@@ -249,8 +308,8 @@
         
         if (matchingCollection) {
           // 如果匹配到集合，跳转到集合页面
-          // 将集合名称转换为URL友好的格式
-          const collectionHandle = matchingCollection.toLowerCase().replace(/\s+/g, '-');
+          // 将集合名称转换为URL友好的格式，把/有下划线替换
+          const collectionHandle = matchingCollection.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
           window.location.href = `collections/${collectionHandle}`;
         } else {
           // 否则使用原有的搜索逻辑
@@ -341,6 +400,9 @@
       }
       // 如果不显示搜索按钮，表单提交被禁用（通过preventDefault已经阻止了默认行为）
     });
+    
+    // 页面加载完成后检查初始表单状态
+    checkInitialFormState();
     
     })('{{ section_id }}'); // 传入section ID作为参数
   });
@@ -471,7 +533,6 @@
     height: 20px;
     fill: #666;
     pointer-events: none;
-    margin-top: 14px;
   }
 
   .easy-search-section-{{ section_id }} .search-button {
@@ -654,8 +715,8 @@
       "type": "textarea",
       "id": "collection_mappings",
       "label": "Collection Mappings",
-      "info": "Enter collection mappings in format: [2001-2003 make model, 2003-2005 make model]. Each mapping should be separated by comma.",
-      "placeholder": "2001-2003 make model, 2003-2005 make model"
+      "info": "Enter collection mappings in format: [2021-2023_Ford_F150, 2024+_Toyota_Tacoma]. Use underscore to separate year_make_model. Use '+' for current year onwards (e.g., 2024+). Each mapping should be separated by comma.",
+      "placeholder": "2021-2023_Ford_F150, 2024+_Toyota_Tacoma"
     },
     {
       "type": "header",

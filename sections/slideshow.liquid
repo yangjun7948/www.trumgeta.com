@@ -76,7 +76,7 @@ LIQUID
                 {%- if block.settings.mobile_image != blank -%}
                   <source
                     media="(max-width: 599px)"
-                    srcset="{{ block.settings.mobile_image | image_url: width: '400x' }} 400w"
+                    srcset="{{ block.settings.mobile_image | image_url: format: 'webp', width: '400x' }} 400w"
                     width="{{ block.settings.mobile_image.width }}"
                     height="{{ block.settings.mobile_image.height }}"
                   >
